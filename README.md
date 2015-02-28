@@ -5,3 +5,6 @@ Completed class projects for Java programming language
 
 #Cash Register
 Simulates a cash register in a book store with the options to purchase and refund items. Test cases provided for testing this programs methods. 
+
+#Movie Inventory Project
+Simple project representing a movie listing directory. User entered values are added and removed to the directory based on select use cases
