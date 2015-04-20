@@ -1,10 +1,10 @@
 package edu.ncsu.csc216.androtech.model.devices;
 
 /**
- * Abstract class representing a device in the
+ * Abstract class representing a device in the android tech repair center
  * 
- * @author Adams
- *
+ * @author Adams Ombonga (amombong)
+ * @version 1.0 (March 29, 2015)
  */
 public abstract class Device implements Prioritizable {
 
