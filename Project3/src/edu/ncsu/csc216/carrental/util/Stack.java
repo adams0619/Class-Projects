@@ -2,6 +2,15 @@ package edu.ncsu.csc216.carrental.util;
 
 import java.util.EmptyStackException;
 
+/**
+ * Utility class representing a Stack of objects which follow a last in, first
+ * out pattern. This stack is implemented using a LinkedList
+ * 
+ * @param <E>
+ *            the object to be stored within this stack
+ * @author Adams Ombonga (amombong)
+ * @version 1.0 (April 20, 2015)
+ */
 public class Stack<E> implements SimpleStack<E> {
 
 	/** Variable reference to the head of the linked list for our stack */
@@ -33,7 +42,7 @@ public class Stack<E> implements SimpleStack<E> {
 	 * @return data the first item of the top of stack
 	 */
 	@Override
-	public E peek() throws EmptyStackException {
+	public E peek() {
 		if (!this.isEmpty())
 			return head.data;
 		throw new EmptyStackException();
@@ -48,7 +57,7 @@ public class Stack<E> implements SimpleStack<E> {
 	 * @return data the first (top) item from the stack
 	 */
 	@Override
-	public E pop() throws EmptyStackException {
+	public E pop() {
 		if (this.isEmpty()) {
 			throw new EmptyStackException();
 		}

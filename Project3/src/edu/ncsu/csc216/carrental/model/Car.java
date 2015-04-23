@@ -42,16 +42,16 @@ public class Car {
 	 * @throws InvalidIDException
 	 *             if the fleetNumber does not match the corresponding pattern
 	 */
-	public Car(String fleetNum, String make, String model, String color) throws InvalidIDException {
+	public Car(String fleetNum, String make, String model, String color) {
 		// Throw exception if the fleet number is invalid
-		String match = "\\b([A-Z]\\d{4})\\b";
-		if (fleetNum.matches(match)) {
+		String match = "\\b([A-Z]{1}\\d{4})\\b";
+		if (!fleetNum.matches(match)) {
+			throw new InvalidIDException("Invalid car ID");
+		} else {
 			this.fleetNum = fleetNum;
 			this.make = make;
 			this.model = model;
 			this.color = color;
-		} else {
-			throw new InvalidIDException("Invalid car parameters");
 		}
 	}
 
@@ -121,10 +121,10 @@ public class Car {
 		return fleetNum + ":  " + make + " " + model + " (" + color + ")";
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Method used to create a unique hashCode for this object
 	 * 
-	 * @see java.lang.Object#hashCode()
+	 * @return integer representing this objects hashCode
 	 */
 	@Override
 	public int hashCode() {
@@ -132,13 +132,16 @@ public class Car {
 		int result = 1;
 		result = prime * result
 				+ ((fleetNum == null) ? 0 : fleetNum.hashCode());
-		return result;
+		return result - prime;
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Method used to compare the passed object to this object by comparing the
+	 * fleet number id's for each object
 	 * 
-	 * @see java.lang.Object#equals(java.lang.Object)
+	 * @param obj
+	 *            the object to be compared
+	 * @return true if the objects are equal, false otherwise
 	 */
 	@Override
 	public boolean equals(Object obj) {
@@ -149,12 +152,7 @@ public class Car {
 		if (getClass() != obj.getClass())
 			return false;
 		Car other = (Car) obj;
-		if (fleetNum == null) {
-			if (other.fleetNum != null)
-				return false;
-		} else if (!fleetNum.equals(other.fleetNum))
-			return false;
-		return true;
+		return this.getFleetNum().equals(other.getFleetNum());
 	}
 
 }

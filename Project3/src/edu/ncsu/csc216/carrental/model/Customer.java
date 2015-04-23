@@ -32,16 +32,15 @@ public class Customer {
 	 * @throws IllegalArgumentException
 	 *             if name parameters for this customer are invalid
 	 */
-	public Customer(String firstName, String lastName, String id)
-			throws InvalidIDException {
+	public Customer(String firstName, String lastName, String id) {
 		// Throw exception if the fleet number is invalid
 		String idMatch = "\\b\\d{2}-\\d{4}";
-		String nameMatch = "^([A-Za-z])+\\b";
+		String nameMatch = "^([A-Za-z'-])+\\b";
 		if (!id.matches(idMatch)) {
 			throw new InvalidIDException("Invalid customer ID");
 		}
 		if (!firstName.matches(nameMatch) || !lastName.matches(nameMatch)) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Invalid name");
 		}
 		this.firstName = firstName;
 		this.lastName = lastName;
@@ -86,25 +85,26 @@ public class Customer {
 		return "" + id + ":  " + firstName + " " + lastName;
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Method used to create a unique hashCode for this object
 	 * 
-	 * @see java.lang.Object#hashCode()
+	 * @return integer representing this objects hashCode
 	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		return result;
+		return result - prime;
 	}
 
 	/**
 	 * Equals method used to test if the object that is passed equals the object
-	 * it is being compared to
+	 * it is being compared to by comparing the id's of each object
 	 * 
 	 * @param obj
 	 *            Object to be compared
+	 * @return true if objects are equal, false otherwise
 	 */
 	@Override
 	public boolean equals(Object obj) {
@@ -115,12 +115,7 @@ public class Customer {
 		if (getClass() != obj.getClass())
 			return false;
 		Customer other = (Customer) obj;
-		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
-			return false;
-		return true;
+		return this.getId().equals(other.getId());
 	}
 
 }

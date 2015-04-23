@@ -2,6 +2,15 @@ package edu.ncsu.csc216.carrental.util;
 
 import java.util.NoSuchElementException;
 
+/**
+ * Utility class representing a Queue of objects which follow a first in, first
+ * out pattern. This Queue is implemented using a LinkedList
+ * 
+ * @param <E>
+ *            the object to be stored within out queue
+ * @author Adams Ombonga (amombong)
+ * @version 1.0 (April 20, 2015)
+ */
 public class Queue<E> implements SimpleQueue<E> {
 
 	/** Variable reference to the head of the linked list for our Queue */
@@ -46,7 +55,7 @@ public class Queue<E> implements SimpleQueue<E> {
 	 * @return removedData the first item of the queue
 	 */
 	@Override
-	public E remove() throws NoSuchElementException {
+	public E remove() {
 		if (head == null)
 			// Throw exception b/c the list is empty
 			throw new NoSuchElementException();
@@ -70,7 +79,7 @@ public class Queue<E> implements SimpleQueue<E> {
 	 * @return first item of the top of queue
 	 */
 	@Override
-	public E peek() throws NoSuchElementException {
+	public E peek() {
 		if (!this.isEmpty())
 			return head.data;
 		// Throw exception if the queue is empty

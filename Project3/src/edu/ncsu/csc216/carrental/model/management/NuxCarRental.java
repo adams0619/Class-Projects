@@ -48,7 +48,7 @@ public class NuxCarRental implements RentalLocation, RentalStateManager {
 	 * Constructor method for this class that is called if no text file is found
 	 */
 	public NuxCarRental() {
-		// Empty constructor do nothing b/c stacks/queues have already be intitialized
+		// Empty constructor do nothing b/c stacks/queues have already be initialized
 	}
 
 	/**
@@ -82,9 +82,7 @@ public class NuxCarRental implements RentalLocation, RentalStateManager {
 				last = name.substring(name.indexOf(" ") + 1);
 				id = data[6];
 			}
-			
-			//TODO Check for Duplicates everywhere you add a car!
-			
+		
 			try {
 				//Create a car and place it into it's corresponding list
 				if (status != null) {
@@ -94,22 +92,34 @@ public class NuxCarRental implements RentalLocation, RentalStateManager {
 							RentalState r = new Rented(c);
 							Car newcar = new Car(fleet, make, model, color);
 							newcar.setState(r);
+							if (findDuplicates(newcar)) {
+								continue;
+							}
 							rented.add(newcar);
 						}	
 					} else if (status.equalsIgnoreCase("A")) {
 						RentalState a = new Available();
 						Car newcar = new Car(fleet, make, model, color);
 						newcar.setState(a);
+						if (findDuplicates(newcar)) {
+							continue;
+						}
 						available.push(newcar);
 					} else if (status.equalsIgnoreCase("D")) {
 						RentalState d = new OutForDetail();
 						Car newcar = new Car(fleet, make, model, color);
 						newcar.setState(d);
+						if (findDuplicates(newcar)) {
+							continue;
+						}
 						detailShop.add(newcar);
 					} else if (status.equalsIgnoreCase("S")) {
 						RentalState s = new OutForRepair();
 						Car newcar = new Car(fleet, make, model, color);
 						newcar.setState(s);
+						if (findDuplicates(newcar)) {
+							continue;
+						}
 						repairShop.add(newcar);
 					}
  				} 
@@ -126,7 +136,7 @@ public class NuxCarRental implements RentalLocation, RentalStateManager {
 	 */
 	@Override
 	public void rentCar() {
-		processRental();
+		available.peek().getState().rentCar(this);
 	}
 	
 	/**
@@ -135,7 +145,7 @@ public class NuxCarRental implements RentalLocation, RentalStateManager {
 	@Override
 	public void returnCar() {
 		//Set parameter to false b/c no problems
-		processReturn(false);
+		rented.peek().getState().returnCar(this);
 	}
 
 	/**
@@ -144,7 +154,7 @@ public class NuxCarRental implements RentalLocation, RentalStateManager {
 	@Override
 	public void reportProblem() {
 		//Set parameter to true b/c problems were reported
-		processReturn(true);
+		rented.peek().getState().reportProblem(this);
 	}
 
 	/**
@@ -153,7 +163,7 @@ public class NuxCarRental implements RentalLocation, RentalStateManager {
 	 */
 	@Override
 	public void completeDetailing() {
-		processDetailed();
+		detailShop.peek().getState().detailDone(this);
 	}
 
 	/**
@@ -162,7 +172,7 @@ public class NuxCarRental implements RentalLocation, RentalStateManager {
 	 */
 	@Override
 	public void completeRepairs() {
-		processRepaired();
+		repairShop.peek().getState().repairDone(this);
 	}
 
 	/**
@@ -198,7 +208,7 @@ public class NuxCarRental implements RentalLocation, RentalStateManager {
 
 	/**
 	 * Method used to return a String containing the current cars that are being
-	 * rented
+	 * rented.
 	 * 
 	 * @return String of cars which are on a rental
 	 */
@@ -208,7 +218,7 @@ public class NuxCarRental implements RentalLocation, RentalStateManager {
 		SimpleQueue<Car> temp = new Queue<>();
 		while (!rented.isEmpty()) {
 			Car dCar = rented.remove();
-			rentedString += dCar.toString() + "\n";
+			rentedString += dCar.toString() + " " + dCar.getState().rentalInfo() + "\n";
 			temp.add(dCar);
 		}
 		while (!temp.isEmpty()) {
@@ -233,7 +243,7 @@ public class NuxCarRental implements RentalLocation, RentalStateManager {
 			temp.add(dCar);
 		}
 		while (!temp.isEmpty()) {
-			detailShop.add((Car) temp.remove());
+			detailShop.add(temp.remove());
 		}
 		return detailString;
 	}
@@ -271,11 +281,11 @@ public class NuxCarRental implements RentalLocation, RentalStateManager {
 		SimpleQueue<Customer> temp = new Queue<>();
 		while (!customers.isEmpty()) {
 			Customer current = customers.remove();
-			customerString = current.toString() + "\n";
+			customerString += current.toString() + "\n";
 			temp.add(current);
 		}
 		while (!temp.isEmpty()) {
-			customers.add((Customer) temp.remove());
+			customers.add(temp.remove());
 		}
 		return customerString;
 	}
@@ -335,46 +345,41 @@ public class NuxCarRental implements RentalLocation, RentalStateManager {
 
 	/**
 	 * Method used to complete UI interaction and add customers to the customer
-	 * queue
+	 * queue. 
+	 * 
+	 * @param c
+	 *            Customer that you are attempting to add
+	 * @return true if customer was added, false otherwise
 	 */
 	@Override
 	public boolean addCustomer(Customer c) {
-		//TODO Find where to throw error for dialog message
-		//TODO Check for Duplicates
-		//Check to determine if customer parameters are valid
-		if (c != null) {
-			//Verify the name is a string w/out #'s or special characters 
-			if (c.getFirstName().matches("^([A-Za-z])+\\b") ||
-				c.getLastName().matches("^([A-Za-z])+\\b")) {
-				// Used to check for duplicates
-				boolean needToAdd = true;
-				SimpleQueue<Customer> temp = new Queue<>();
-				//Last-in First out.
-				while (!customers.isEmpty()) {
-					Customer tempC = customers.remove();
-					if (c.getId().contentEquals(tempC.getId())) {
-						needToAdd = false;
-					}
-					temp.add(tempC);
-				}
-				//Last-In, First out
-				while (!temp.isEmpty()) {
-					//Re-add to the customers queue 
-					customers.add(temp.remove());
-				}
-				if (needToAdd) {
-					customers.add(c);
-					return true;
-				} else {
-					return false;
-				}
-			} else {
-				return false;
-			}
-		} else {
+		//No customer means no need to add customer
+		if (null == c) {
 			return false;
 		}
+		Queue<Customer> tempCustomer = new Queue<Customer>();
+		boolean addCustomer = true;
+		while (!customers.isEmpty()) {
+			if (customers.peek().equals(c))
+				addCustomer = false;
+			tempCustomer.add(customers.remove());
+		}
+		while (!tempCustomer.isEmpty())
+			customers.add(tempCustomer.remove());
+		Queue<Car> tempCar = new Queue<Car>();
+		while (!rented.isEmpty()) {
+			Rented r = (Rented) rented.peek().getState();
+			if (r.getCustomer().equals(c))
+				addCustomer = false;
+			tempCar.add(rented.remove());
+		}
+		while (!tempCar.isEmpty())
+			rented.add(tempCar.remove());
+		if (addCustomer)
+			customers.add(c);
+		return addCustomer;
 	}
+
 
 	/**
 	 * Method used to complete UI interaction and add a car to the available
@@ -389,29 +394,11 @@ public class NuxCarRental implements RentalLocation, RentalStateManager {
 		//TODO Find where to throw error for dialog message
 		if (c != null) {
 			if (c.getFleetNum().matches("\\b([A-Z]\\d{4})\\b")) {
-				SimpleStack<Car> temp = new Stack<>();
-				// Used to check for duplicates
-				boolean dontAdd = false;
-				// Pop items from stack and place them into temp stack (will be in
-				// reverse order) --> Last In, First Out
-				while (!available.isEmpty()) {
-					// Pop first item
-					Car availCar = available.pop();
-					// Put last items from available stack as first items into this
-					// stack
-					if (c.getFleetNum().equals(availCar.getFleetNum())) {
-						dontAdd = true;
-					}
-					temp.push(availCar);
-				}
-				while (!temp.isEmpty()) {
-					// Pop items from the temporary stack (last item, was the first time in
-					// previous stack
-					available.push(temp.pop());
-				}
-				if (dontAdd) {
+				if (findDuplicates(c)) {
 					return false;
 				} else {
+					RentalState avail = new Available();
+					c.setState(avail);
 					available.push(c);
 					return true;
 				}
@@ -524,17 +511,35 @@ public class NuxCarRental implements RentalLocation, RentalStateManager {
 	 *             thrown if the fleet number for the new car is invalid
 	 */
 	@Override
-	public void processNewCar(String id, String make, String model, String color)
-			throws InvalidIDException {
+	public void processNewCar(String id, String make, String model, String color) {
+		// Possible use try/catch for creating new cars
+		try {
+			Car newCar = new Car(id, make, model, color);
+			addCar(newCar);	
+		} catch (InvalidIDException ex) {
+			ex.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Private inner method used to determine if the
+	 * 
+	 * @param c
+	 *            the car containing the information to be compared
+	 * @return true if a duplicate is found, false otherwise
+	 */
+	private boolean findDuplicates(Car c) {
 		boolean dontAdd = false;
 		SimpleStack<Car> temp = new Stack<>();
-		SimpleStack<Car> temp2 = new Stack<>();
-		// Pop items from stack and place them into temp stack (will be in
-		// reverse order) --> Last In, First Out
+		SimpleQueue<Car> tempRented = new Queue<>();
+		SimpleQueue<Car> tempRepair = new Queue<>();
+		SimpleQueue<Car> tempDetail = new Queue<>();
+
+		///CHECK AVAILABLE STACK
 		while (!available.isEmpty()) {
 			// Pop cars from the stack
 			Car availCar = available.pop();
-			if (availCar.getFleetNum().equals(id)) {
+			if (availCar.getFleetNum().equals(c.getFleetNum())) {
 				dontAdd = true;
 			}
 			// Put last items from available stack as first items into this
@@ -544,23 +549,46 @@ public class NuxCarRental implements RentalLocation, RentalStateManager {
 		while (!temp.isEmpty()) {
 			// Pop items from the temp stack (last item, was the first time in
 			// previous stack
-			temp2.push(temp.pop());
-			available.push(temp2.pop());
+			tempRented.add(temp.pop());
+			available.push(tempRented.remove());
 		}
-		if (dontAdd)
-			throw new InvalidIDException("Duplicate ID for Car");
-		// Possible use try/catch for creating new cars
-		try {
-			Car newCar = new Car(id, make, model, color);
-			RentalState avail = new Available();
-			newCar.setState(avail);
-			addCar(newCar);	
-		} catch (InvalidIDException ex) {
-			ex.printStackTrace();
-			throw new InvalidIDException("Invlaid ID for Car");
+		//CHECK RENTED QUEUE
+		while (!rented.isEmpty()) {
+			Car availCar = rented.remove();
+			if (availCar.getFleetNum().equals(c.getFleetNum())) {
+				dontAdd = true;
+			}
+			tempRented.add(availCar);
 		}
+		while (!tempRented.isEmpty()) {
+			rented.add((Car) tempRented.remove());
+		}
+		//CHECK REPAIR SHOP QUEUE
+		while (!repairShop.isEmpty()) {
+			Car availCar = repairShop.remove();
+			if (availCar.getFleetNum().equals(c.getFleetNum())) {
+				dontAdd = true;
+			}
+			tempRepair.add(availCar);
+		}
+		while (!tempRepair.isEmpty()) {
+			repairShop.add((Car) tempRepair.remove());
+		}
+		//CHECK DETAIL SHOP QUEUE
+		while (!detailShop.isEmpty()) {
+			Car availCar = detailShop.remove();
+			if (availCar.getFleetNum().equals(c.getFleetNum())) {
+				dontAdd = true;
+			}
+			tempDetail.add(availCar);
+		}
+		while (!tempDetail.isEmpty()) {
+			detailShop.add((Car) tempDetail.remove());
+		}
+		return dontAdd;
 	}
-
+	
+	
 	// If program terminated save file into CSV or text file with current
 	// inventory
 	/**
@@ -576,19 +604,54 @@ public class NuxCarRental implements RentalLocation, RentalStateManager {
 	 */
 	@Override
 	public void writeData(Writer writer) throws IOException {
-		// TODO Complete method logic
-//		try { 
-            //Whatever the file path is. 
-//            File filename = new File(//USER INPUT FILE NAME);
-//            FileOutputStream output = new FileOutputStream(filename);
-//            OutputStreamWriter osw = new OutputStreamWriter(output);    
-//            Writer w = new BufferedWriter(osw);
-//            w.write("POTATO!!!"); //What you are writing
-//            w.close();
-//        } catch (IOException e) {
-//            System.err.println("Problem writing to the file statsTest.txt");
-//        } 
-
+		String printFile = "";
+		//CHECK AVAILABLE STACK
+		while (!available.isEmpty()) {
+			// Pop cars from the stack
+			Car car = available.pop();
+			printFile += car.getMake() + ",";
+			printFile += car.getModel() + ",";
+			printFile += car.getColor() + ",";
+			printFile += car.getFleetNum() + ",";
+			printFile += "A" + "\n";
+		}
+		//CHECK RENTED QUEUE
+		while (!rented.isEmpty()) {
+			// Pop cars from the stack
+			Car car = rented.remove();
+			printFile += car.getMake() + ",";
+			printFile += car.getModel() + ",";
+			printFile += car.getColor() + ",";
+			printFile += car.getFleetNum() + ",";
+			printFile += "R" + ",";
+			Rented state = (Rented) car.getState();
+			printFile += state.getCustomer().getFirstName() + " " + state.getCustomer().getLastName() + ",";
+			printFile += state.getCustomer().getId() + "\n";
+		}
+		//CHECK REPAIR SHOP QUEUE
+		while (!repairShop.isEmpty()) {
+			Car car = repairShop.remove();
+			printFile += car.getMake() + ",";
+			printFile += car.getModel() + ",";
+			printFile += car.getColor() + ",";
+			printFile += car.getFleetNum() + ",";
+			printFile += "S" + "\n";
+		}
+		//CHECK DETAIL SHOP QUEUE
+		while (!detailShop.isEmpty()) {
+			Car car = detailShop.remove();
+			printFile += car.getMake() + ",";
+			printFile += car.getModel() + ",";
+			printFile += car.getColor() + ",";
+			printFile += car.getFleetNum() + ",";
+			printFile += "D" + "\n";
+		}
+		if (writer != null) {
+			writer.write(printFile);
+			writer.close();
+		} else {
+			throw new IOException();
+		}
 	}
 
 }

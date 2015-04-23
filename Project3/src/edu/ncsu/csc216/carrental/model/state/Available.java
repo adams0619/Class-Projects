@@ -26,9 +26,13 @@ public class Available implements RentalState {
 	 *             if this method cannot be called in this current state
 	 */
 	@Override
-	public void rentCar(RentalStateManager mgr) throws IllegalStateException {
+	public void rentCar(RentalStateManager mgr) {
 		// Use manager to rent a car
-		mgr.processRental();
+		if (mgr != null) {
+			mgr.processRental();
+		} else {
+			throw new IllegalStateException();
+		}
 	}
 
 	/**
@@ -41,7 +45,7 @@ public class Available implements RentalState {
 	 *             if this method cannot be called in this current state
 	 */
 	@Override
-	public void returnCar(RentalStateManager mgr) throws IllegalStateException {
+	public void returnCar(RentalStateManager mgr) {
 		// Car cannot be returned if its currently available
 		throw new IllegalStateException();
 	}
@@ -56,8 +60,7 @@ public class Available implements RentalState {
 	 *             if this method cannot be called in this current state
 	 */
 	@Override
-	public void reportProblem(RentalStateManager mgr)
-			throws IllegalStateException {
+	public void reportProblem(RentalStateManager mgr) {
 		// Car cannot be returned with problem if its currently available
 		throw new IllegalStateException();
 	}
@@ -73,7 +76,7 @@ public class Available implements RentalState {
 	 *             if this method cannot be called in this current state
 	 */
 	@Override
-	public void detailDone(RentalStateManager mgr) throws IllegalStateException {
+	public void detailDone(RentalStateManager mgr) {
 		// Car cannot be detailed if its currently available
 		throw new IllegalStateException();
 	}
@@ -82,11 +85,14 @@ public class Available implements RentalState {
 	 * Method used to repair a car if a problem was reported when the rental was
 	 * completed
 	 * 
+	 * @param mgr
+	 *            Reference to the car rental manager which is used to process
+	 *            the car through different states
 	 * @throws IllegalStateException
 	 *             if this method cannot be called in this current state
 	 */
 	@Override
-	public void repairDone(RentalStateManager mgr) throws IllegalStateException {
+	public void repairDone(RentalStateManager mgr) {
 		// Car cannot be repaired if its currently available
 		throw new IllegalStateException();
 
@@ -97,9 +103,10 @@ public class Available implements RentalState {
 	 * 
 	 * @throws IllegalStateException
 	 *             if this method cannot be called in this current state
+	 * @return String representing the info about the rented car
 	 */
 	@Override
-	public String rentalInfo() throws IllegalStateException {
+	public String rentalInfo() {
 		throw new IllegalStateException();
 	}
 

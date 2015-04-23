@@ -9,13 +9,13 @@ package edu.ncsu.csc216.carrental.model;
  *
  */
 @SuppressWarnings("serial")
-public class InvalidIDException extends RuntimeException{
+public class InvalidIDException extends RuntimeException {
 	
 	/**
 	 * Generic constructor method for the exception
 	 */
 	public InvalidIDException() {
-		super();
+		super("Invalid ID");
 	}
 	
 	/**

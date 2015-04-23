@@ -29,9 +29,10 @@ public class Rented implements RentalState {
 	 * 
 	 * @throws IllegalStateException
 	 *             if this method cannot be called in this current state
+	 * @param mgr RentalStateManager for change             
 	 */
 	@Override
-	public void rentCar(RentalStateManager mgr) throws IllegalStateException {
+	public void rentCar(RentalStateManager mgr) {
 		// Car cannot be rented if its currently rented
 		throw new IllegalStateException();
 	}
@@ -46,9 +47,12 @@ public class Rented implements RentalState {
 	 *             if this method cannot be called in this current state
 	 */
 	@Override
-	public void returnCar(RentalStateManager mgr) throws IllegalStateException {
+	public void returnCar(RentalStateManager mgr) {
 		// Return this car with a problem
-		mgr.processReturn(false);
+		if (mgr != null)
+			mgr.processReturn(false);
+		else
+			throw new IllegalStateException();
 	}
 
 	/**
@@ -61,8 +65,7 @@ public class Rented implements RentalState {
 	 *             if this method cannot be called in this current state
 	 */
 	@Override
-	public void reportProblem(RentalStateManager mgr)
-			throws IllegalStateException {
+	public void reportProblem(RentalStateManager mgr) {
 		// Return this car with a problem
 		mgr.processReturn(true);
 	}
@@ -79,7 +82,7 @@ public class Rented implements RentalState {
 	 *             if this method cannot be called in this current state
 	 */
 	@Override
-	public void detailDone(RentalStateManager mgr) throws IllegalStateException {
+	public void detailDone(RentalStateManager mgr) {
 		// Car cannot be detailed if its currently rented
 		throw new IllegalStateException();
 	}
@@ -95,7 +98,7 @@ public class Rented implements RentalState {
 	 *             if this method cannot be called in this current state
 	 */
 	@Override
-	public void repairDone(RentalStateManager mgr) throws IllegalStateException {
+	public void repairDone(RentalStateManager mgr) {
 		// Car cannot be repaired if its currently rented
 		throw new IllegalStateException();
 	}
@@ -105,11 +108,12 @@ public class Rented implements RentalState {
 	 * 
 	 * @throws IllegalStateException
 	 *             if this method cannot be called in this current state
+	 * @return String of rental info            
 	 */
 	@Override
-	public String rentalInfo() throws IllegalStateException {
-		return customer.getFirstName().substring(0, 1) + " "
-			   + customer.getLastName();
+	public String rentalInfo() {
+		return "(" + customer.getFirstName().substring(0, 1) + " "
+			   + customer.getLastName() + ")";
 	}
 
 	/**

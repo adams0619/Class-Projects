@@ -26,7 +26,7 @@ public class OutForDetail implements RentalState {
 	 *             if this method cannot be called in this current state
 	 */
 	@Override
-	public void rentCar(RentalStateManager mgr) throws IllegalStateException {
+	public void rentCar(RentalStateManager mgr) {
 		// Car cannot be rented if its currently out for detail
 		throw new IllegalStateException();
 	}
@@ -41,7 +41,7 @@ public class OutForDetail implements RentalState {
 	 *             if this method cannot be called in this current state
 	 */
 	@Override
-	public void returnCar(RentalStateManager mgr) throws IllegalStateException {
+	public void returnCar(RentalStateManager mgr) {
 		// Car cannot be returned if its currently out for detail
 		throw new IllegalStateException();
 	}
@@ -56,8 +56,7 @@ public class OutForDetail implements RentalState {
 	 *             if this method cannot be called in this current state
 	 */
 	@Override
-	public void reportProblem(RentalStateManager mgr)
-			throws IllegalStateException {
+	public void reportProblem(RentalStateManager mgr) {
 		// Car cannot be returned with problem if its currently out for detail
 		throw new IllegalStateException();
 	}
@@ -73,9 +72,12 @@ public class OutForDetail implements RentalState {
 	 *             if this method cannot be called in this current state
 	 */
 	@Override
-	public void detailDone(RentalStateManager mgr) throws IllegalStateException {
+	public void detailDone(RentalStateManager mgr) {
 		// Finish detailing this car
-		mgr.processDetailed();
+		if (mgr != null) 
+			mgr.processDetailed();
+		else 
+			throw new IllegalStateException();
 	}
 
 	/**
@@ -89,7 +91,7 @@ public class OutForDetail implements RentalState {
 	 *             if this method cannot be called in this current state
 	 */
 	@Override
-	public void repairDone(RentalStateManager mgr) throws IllegalStateException {
+	public void repairDone(RentalStateManager mgr) {
 		// Car cannot be repaired if its currently out for detail
 		throw new IllegalStateException();
 	}
@@ -99,9 +101,10 @@ public class OutForDetail implements RentalState {
 	 * 
 	 * @throws IllegalStateException
 	 *             if this method cannot be called in this current state
+	 * @return String representing the info about the rented car
 	 */
 	@Override
-	public String rentalInfo() throws IllegalStateException {
+	public String rentalInfo() {
 		throw new IllegalStateException();
 	}
 }

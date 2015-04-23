@@ -6,8 +6,8 @@ import java.util.NoSuchElementException;
  * A simple collection designed for holding elements prior to processing.
  * A Queue typically orders elements in a FIFO (First-In-First-Out) manner.
  * 
+ * @param<E> generic object to be stored in this type of queue
  * @author David Wright
- *
  */
 public interface SimpleQueue<E> {
 
