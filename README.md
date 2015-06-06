@@ -46,6 +46,18 @@ The user can use and selected file to load devices into the list within the prog
 This project is meant to focus on Stacks and Queues which we implement/construct on our own within the project. This project also showcases file I/O by implementing methods that allow for a user selected file to be read when the program is executed, but also for the data to be saved when the user exits the program. While this program follows the MVC pattern, it also adheres to the state design pattern (using a FSM); this project also illustrates specific UI creation/interaction through the GUI classes 
 
 ###Description 
-*To be updated*
+This project represents a car rental system where customers rent a car and go through different states of a car rental by following a Finite-State pattern. When starting the program the user is given the option to load a previous inventory file containing cars in different rental states (i.e. Rented, Out for Repair, Available, etc.), if no file is selected the user can manually add customers and cars to the inventory. Other user options include renting a car, returning a  car (with or w/out a problem), repairing a car, and detailing a car. Upon exiting the program the user is given the option to save the current inventory to a specified file and location. 
+
+*JUnit test cases are provided for testing various methods within the program*
+
+The input and output file is read and saved using the following format/pattern: 
+
 ####Usage
-*To be updated*
+1. Run the program using the CarRentalGUI.java class
+2. Use dialog box to select a file containing car inventory information or click cancel if no file is present
+3. Depending on the presence of file:
+  * If a file is present, it is traversed and the cars are added to the correct list. 
+  * If no file is present an empty car list is created
+4. User then decide which options to select from GUI (i.e. adding a customer, adding a car, renting a car, etc.)
+5. To exit program click the red "X" button along the top right of the GUI
+6. Upon exit, the user will be prompted to save the entire inventory list currently in the car rental program to a file/location of their choosing.
